@@ -71,7 +71,7 @@ const totalColoursUsed = (individual) => {
 const fit = (individual, adjacencyMatrix) =>{
      let collisions = checkCollisions(adjacencyMatrix, individual)
      let coloursUsed = totalColoursUsed(individual)
-     return coloursUsed - collisions
+     return collisions > 0 ? 0 : coloursUsed
 }
 
 const mutate = (individual, mutationRate) =>{
