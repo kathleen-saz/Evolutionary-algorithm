@@ -183,7 +183,7 @@ const printResults = (graph, population, graphType) =>
     aux += `Colours used: <b>${totalColoursUsed(individual)} &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
     aux += `Clashes: <b>${hasClashes(graph, individual)} &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
     for (let j = 0; j < individual.length; j++) {
-       aux += `${individual[j].colour}, `
+       aux += `${individual[j]}, `
     }
     aux += `</p>`;
     bucket.innerHTML += aux;
@@ -199,7 +199,7 @@ const hasClashes = (graph, individual) =>{
 
   for (let i = 0; i < graphOrder; i++) {
     for (let j = 0; j < graphOrder; j++) {
-        if(graph[i][j] === 1 && individual[i].colour === individual[j].colour) return true;
+        if(graph[i][j] === 1 && individual[i] === individual[j]) return true;
     }
   }
 
@@ -211,7 +211,7 @@ const totalColoursUsed = (individual) => {
   let colours = new Set();
 
   for (let colour of individual) {
-     colours.add(colour.colour)
+     colours.add(colour)
   }
   return colours.size
 }
@@ -239,15 +239,16 @@ const getColours = (numberOfColours) => {
 }
 
 const mutate = (individual, s) =>{
-  let rate = Math.round((individual.length)/2 * s)
-  let colors = getColours(individual.length);
+  let mutated = individual.concat();
+  let rate = 1;  //Math.round((individual.length)/2 * s)
+  let colors = getColours(mutated.length);
 
   for (let i = 0; i < rate; i++) {
     const colour = colors.splice( _.random(colors.length-1), 1 );
-    individual[ _.random(individual.length -1) ].colour = colour[0];
+    mutated[ _.random(mutated.length -1) ] = colour[0];
   }
 
-  return individual;
+  return mutated;
 }
 
 const cross = (individual1, individual2) =>{
@@ -276,7 +277,7 @@ const generateInitialPopulation = (graphOrder, populationSize) => {
 
      for (let k = 0; k < graphOrder; k++) {
          const color = colors.splice( _.random(colors.length-1), 1 )
-         individual.push({ colour: color[0] });
+         individual.push(color[0]);
      }
 
      individuals.push(individual)
@@ -326,6 +327,6 @@ const wheel = [
 ];
 
 
- evc(crown, 10, 100000, "Crown (8)")
- evc(petersen, 10, 100000, "Petersen (10)")
- evc(wheel, 10, 100000, "Wheel (12)")
+ ev(crown, 10, 1000, "Crown (8)")
+ ev(petersen, 10, 1000, "Petersen (10)")
+ ev(wheel, 10, 1000, "Wheel (12)")
