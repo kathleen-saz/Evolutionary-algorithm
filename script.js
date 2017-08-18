@@ -8,7 +8,7 @@ function ev(graph, populationSize, generations, graphType){
     let toBeMutatedPosition = _.random(populationSize - 1)
     let toBeMutated = population[ toBeMutatedPosition ]
     let contenderPosition = _.random(populationSize - 1)
-    let mutated = mutate(toBeMutated, 1.0)
+    let mutated = mutate(toBeMutated)
 
     if(fit(mutated, graph) > fit(population[contenderPosition], graph))
     {
@@ -35,7 +35,7 @@ function evc(graph, populationSize, generations, graphType){
     let child = cross(parent1, parent2)
     let toBeMutated = population[ toBeMutatedPosition ]
     let contenderPosition = _.random(populationSize - 1)
-    let mutated = mutate(toBeMutated, 1.0)
+    let mutated = mutate(toBeMutated)
 
     if(fit(mutated, graph) > fit(population[contenderPosition], graph))
     {
@@ -64,7 +64,7 @@ function eva(graph, populationSize, generations, graphType){
     let toBeMutatedPosition = _.random(populationSize - 1)
     let toBeMutated = population[ toBeMutatedPosition ]
     let contenderPosition = _.random(populationSize - 1)
-    let mutated = mutate(toBeMutated, (generations - i + 1)/generations)
+    let mutated = mutateA(toBeMutated, (generations - i + 1)/generations)
 
     if(fit(mutated, graph) > fit(population[contenderPosition], graph))
     {
@@ -73,6 +73,7 @@ function eva(graph, populationSize, generations, graphType){
   }
 
   printResults(graph, population, graphType);
+
 }
 
 function evac(graph, populationSize, generations, graphType){
@@ -90,7 +91,7 @@ function evac(graph, populationSize, generations, graphType){
     let child = cross(parent1, parent2)
     let toBeMutated = population[ toBeMutatedPosition ]
     let contenderPosition = _.random(populationSize - 1)
-    let mutated = mutate(toBeMutated, (generations - i + 1)/generations)
+    let mutated = mutateA(toBeMutated, (generations - i + 1)/generations)
 
     if(fit(mutated, graph) > fit(population[contenderPosition], graph))
     {
@@ -115,7 +116,7 @@ function evacnm(n, m, graph, populationSize, generations, graphType){
   const population = generateInitialPopulation(graphOrder, populationSize)
 
   for(let i=0; i<generations; i++){
-    for (let j = 0; j <= n; i++) {
+    for (let j = 0; j <= n; j++) {
       let toBeMutatedPosition = _.random(populationSize - 1)
       let parent1Position = _.random(populationSize - 1)
       let parent2Position = _.random(populationSize - 1)
@@ -123,7 +124,7 @@ function evacnm(n, m, graph, populationSize, generations, graphType){
       let parent2 = population[parent2Position];
       let child = cross(parent1, parent2)
       let toBeMutated = population[ toBeMutatedPosition ]
-      let mutated = mutate(toBeMutated, (generations - i + 1)/generations)
+      let mutated = mutateA(toBeMutated, (generations - i + 1)/generations)
 
       for (let k = 0; k < m; k++) {
         let contenderPosition = _.random(populationSize - 1)
@@ -178,13 +179,12 @@ const printResults = (graph, population, graphType) =>
     let aux = "";
     individual = population[i];
     let fitness = fit(individual,graph);
-    aux += `<p ${fitness === -1 ? "style=\"color:#f46b42;\"": ""}>Individual <b>${i}: &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
+    aux += `<p ${fitness === -1 ? "style=\"color:#f46b42;\"": ""}>Individual <b>${i+1}: &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
     aux += `Fitness: <b>${fitness} &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
     aux += `Colours used: <b>${totalColoursUsed(individual)} &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
-    aux += `Clashes: <b>${hasClashes(graph, individual)} &nbsp;&nbsp;&nbsp;&nbsp;</b>`;
-    for (let j = 0; j < individual.length; j++) {
+    /*for (let j = 0; j < individual.length; j++) {
        aux += `${individual[j]}, `
-    }
+    }*/
     aux += `</p>`;
     bucket.innerHTML += aux;
   }
@@ -238,14 +238,28 @@ const getColours = (numberOfColours) => {
    return colours;
 }
 
-const mutate = (individual, s) =>{
+/* const mutate = (individual) =>{
   let mutated = individual.concat();
-  let rate = 1;  //Math.round((individual.length)/2 * s)
   let colors = getColours(mutated.length);
 
+  const colour = colors.splice( _.random(colors.length-1), 1 )[0];
+  mutated[ _.random(mutated.length -1) ] = colour;
+
+  return mutated;
+} */
+
+const mutate = (individual) =>{
+  let mutated = individual.concat();
+  mutated[ _.random(mutated.length -1) ] = individual[ _.random(mutated.length -1)]
+  return mutated;
+}
+
+const mutateA = (individual, s) =>{
+  let mutated = individual.concat();
+  let rate = Math.round((individual.length)/2 * s)
+
   for (let i = 0; i < rate; i++) {
-    const colour = colors.splice( _.random(colors.length-1), 1 );
-    mutated[ _.random(mutated.length -1) ] = colour[0];
+    mutated[ _.random(mutated.length -1) ] = individual[ _.random(mutated.length -1)]
   }
 
   return mutated;
@@ -327,6 +341,22 @@ const wheel = [
 ];
 
 
- ev(crown, 10, 1000, "Crown (8)")
- ev(petersen, 10, 1000, "Petersen (10)")
- ev(wheel, 10, 1000, "Wheel (12)")
+ //ev(crown, 20, 2000, "Crown (8)")
+ //ev(petersen, 20, 2000, "Petersen (10)")
+ //ev(wheel, 20, 2000, "Wheel (12)")
+
+ //evc(crown, 10, 1500, "Crown (8)")
+ //evc(petersen, 10, 1500, "Petersen (10)")
+ //evc(wheel, 10, 1500, "Wheel (12)")
+
+ //eva(crown, 10, 300, "Crown (8)")
+ //eva(petersen, 10, 300, "Petersen (10)")
+ //eva(wheel, 10, 300, "Wheel (12)")
+
+ //evac(crown, 10, 250, "Crown (8)")
+ //evac(petersen, 10, 300, "Petersen (10)")
+ //evac(wheel, 10, 300, "Wheel (12)")
+
+ //evacnm(3, 3, crown, 10, 100, "Crown (8)")
+ //evacnm(3, 3, petersen, 10, 120, "Petersen (10)")
+ //evacnm(3, 3, wheel, 10, 120, "Wheel (12)")
