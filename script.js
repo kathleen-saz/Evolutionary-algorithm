@@ -151,23 +151,78 @@ function evacnm(n, m, graph, populationSize, generations, graphType){
 
 function memetic(graph, populationSize, generations, graphType){
 
-  // function EVA(1, 1)(p, g)
-  // pop ← a new array with p elements
-  // for i ∈ 1, 2, . . . , p do
-  // pop[i] ← gen()
-  // for j ∈ 1, 2, . . . , g do
-  // x, y ← two random elements of pop
-  // x' ← mut((x, g−j+1 )/ g)
-  // )
-  // if fit(x') > fit(y) then
-  // Replace y with x'
-  // return pop
+  const graphOrder = graph[0].length
+
+  const population = generateInitialPopulation(graphOrder, populationSize)
+
+  for(let i=0; i<generations; i++){
+
+      let toBeImprovedPosition = _.random(populationSize - 1)
+      let parent1Position = _.random(populationSize - 1)
+      let parent2Position = _.random(populationSize - 1)
+      let parent1 = population[parent1Position];
+      let parent2 = population[parent2Position];
+      let child = cross(parent1, parent2)
+      let toBeImproved = population[ toBeImprovedPosition ]
+      let improved = improve(toBeImproved, graph)
+
+      population[toBeImproved] = improved;
+
+      if (fit(child, graph) > fit(parent1, graph)) {
+          population[parent1Position] = child
+      }
+      else if (fit(child, graph) > fit(parent2, graph)) {
+        population[parent2Position] = child
+      }
+  }
+
+  printResults(graph, population, graphType);
 
 }
 
-const improve = (individual, depth, numberOfNodes) =>{
+const improve = (individual, adjacencyMatrix) =>{
 
-  //when doing memetic search
+  let improved = individual.concat();
+  let colours = getColoursIndividual(individual);
+
+  for (let i = 0; i < individual.length; i++) {
+    let attempt = individual.concat();
+    for (let colour of colours) {
+      attempt[i] = colour;
+      if (isValidColouring(attempt, adjacencyMatrix, i)) {
+        improved = attempt
+        break;
+      }
+    }
+  }
+  return improved;
+}
+
+const getColoursIndividual = (individual) => {
+  let colours = new Set();
+  for (let colour of individual) {
+     colours.add(colour);
+  }
+  return colours;
+}
+
+const isValidColouring = (individual, adjacencyMatrix, node) => {
+    for (let i = 0; i < individual.length; i++) {
+       if (adjacencyMatrix[node][i] === 1 && individual[i] === individual[node]) {
+            return false;
+       }
+    }
+    return true;
+}
+
+const searchForTheBest = (individual, adjacencyMatrix, depth, ) =>{
+
+  let best;
+
+
+
+  return best;
+
 }
 
 const printResults = (graph, population, graphType) =>
@@ -237,16 +292,6 @@ const getColours = (numberOfColours) => {
 
    return colours;
 }
-
-/* const mutate = (individual) =>{
-  let mutated = individual.concat();
-  let colors = getColours(mutated.length);
-
-  const colour = colors.splice( _.random(colors.length-1), 1 )[0];
-  mutated[ _.random(mutated.length -1) ] = colour;
-
-  return mutated;
-} */
 
 const mutate = (individual) =>{
   let mutated = individual.concat();
@@ -360,3 +405,5 @@ const wheel = [
  //evacnm(3, 3, crown, 10, 100, "Crown (8)")
  //evacnm(3, 3, petersen, 10, 120, "Petersen (10)")
  //evacnm(3, 3, wheel, 10, 120, "Wheel (12)")
+
+ memetic(crown, 100, 100000, "Crown (8)");
