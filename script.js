@@ -16,7 +16,9 @@ function ev(graph, populationSize, generations, graphType){
     }
   }
 
-  printResults(graph, population, graphType);
+  //printResults(graph, population, graphType);
+
+  return population;
 
 }
 
@@ -198,12 +200,38 @@ const improve = (individual, adjacencyMatrix) =>{
   return improved;
 }
 
+const improve2 = (individual, adjacencyMatrix) =>{
+
+  let improved = individual.concat();
+  let colours = getColoursIndividual(individual);
+
+  for (let i = 0; i < individual.length; i++) {
+    let attempt = individual.concat();
+    for (let colour of colours) {
+      attempt[i] = colour;
+      if (isValidColouring(attempt, adjacencyMatrix, i)) {
+        improved = attempt
+        break;
+      }
+    }
+  }
+  return improved;
+}
+
 const getColoursIndividual = (individual) => {
   let colours = new Set();
   for (let colour of individual) {
      colours.add(colour);
   }
   return colours;
+}
+
+const getArrayColoursUsed = (population) => {
+  let array = [];
+  for (let individual of population) {
+     array.push(getColoursIndividual(individual).size);
+  }
+  return array;
 }
 
 const isValidColouring = (individual, adjacencyMatrix, node) => {
@@ -385,10 +413,34 @@ const wheel = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
 ];
 
+const printSummary = (graph, population, generations, graphType, fn) =>{
 
- //ev(crown, 20, 2000, "Crown (8)")
- //ev(petersen, 20, 2000, "Petersen (10)")
- //ev(wheel, 20, 2000, "Wheel (12)")
+  let all =[]
+  for (let i = 0; i < 10; i++) {
+    all = all.concat(fn(graph, population, generations, graphType));
+  }
+
+  let byColoursUsed = getArrayColoursUsed(all)
+  let median = math.median(byColoursUsed);
+  let min = math.min(byColoursUsed);
+  let std = math.std(byColoursUsed);
+
+  let bucket = document.getElementById("wrapper");
+  bucket.innerHTML += `<h1>${graphType}</h1>`
+  bucket.innerHTML += `<p>Median: ${median}</p>`
+  bucket.innerHTML += `<p>Min: ${min}</p>`
+  bucket.innerHTML += `<p>Standand Deviation: ${std}</p>`
+
+}
+
+
+printSummary(crown, 10, 200, "Crown (8)", ev)
+printSummary(petersen, 10, 200, "Petersen (8)", ev)
+printSummary(wheel, 10, 200, "Wheel (8)", ev)
+
+//evc(crown, 10, 200, "Crown (8)")
+//ev(petersen, 10, 200, "Petersen (10)")
+//ev(wheel, 10, 200, "Wheel (12)")
 
  //evc(crown, 10, 1500, "Crown (8)")
  //evc(petersen, 10, 1500, "Petersen (10)")
@@ -406,4 +458,6 @@ const wheel = [
  //evacnm(3, 3, petersen, 10, 120, "Petersen (10)")
  //evacnm(3, 3, wheel, 10, 120, "Wheel (12)")
 
- memetic(crown, 100, 100000, "Crown (8)");
+ //memetic(crown, 10, 50, "Crown (8)");
+ //memetic(petersen, 10, 50, "Petersen (10)")
+ //memetic(wheel, 10, 50, "Wheel (12)")
