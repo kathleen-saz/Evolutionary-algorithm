@@ -54,6 +54,8 @@ function evc(graph, populationSize, generations, graphType){
 
   printResults(graph, population, graphType);
 
+  return population;
+
 }
 
 function eva(graph, populationSize, generations, graphType){
@@ -74,7 +76,9 @@ function eva(graph, populationSize, generations, graphType){
     }
   }
 
-  printResults(graph, population, graphType);
+  //printResults(graph, population, graphType);
+
+  return population;
 
 }
 
@@ -108,7 +112,8 @@ function evac(graph, populationSize, generations, graphType){
     }
   }
 
-  printResults(graph, population, graphType);
+  return population;
+  //printResults(graph, population, graphType);
 }
 
 function evacnm(n, m, graph, populationSize, generations, graphType){
@@ -147,7 +152,9 @@ function evacnm(n, m, graph, populationSize, generations, graphType){
     }
   }
 
-  printResults(graph, population, graphType);
+  return population;
+
+  //printResults(graph, population, graphType);
 
 }
 
@@ -433,10 +440,34 @@ const printSummary = (graph, population, generations, graphType, fn) =>{
 
 }
 
+const printSummarymn = (graph, population, generations, graphType, fn, n, m) =>{
 
-printSummary(crown, 10, 200, "Crown (8)", ev)
-printSummary(petersen, 10, 200, "Petersen (8)", ev)
-printSummary(wheel, 10, 200, "Wheel (8)", ev)
+  let all =[]
+  for (let i = 0; i < 10; i++) {
+    all = all.concat(fn(n, m, graph, population, generations, graphType));
+  }
+
+  let byColoursUsed = getArrayColoursUsed(all)
+  let median = math.median(byColoursUsed);
+  let min = math.min(byColoursUsed);
+  let std = math.std(byColoursUsed);
+
+  let bucket = document.getElementById("wrapper");
+  bucket.innerHTML += `<h1>${graphType}</h1>`
+  bucket.innerHTML += `<p>Median: ${median}</p>`
+  bucket.innerHTML += `<p>Min: ${min}</p>`
+  bucket.innerHTML += `<p>Standand Deviation: ${std}</p>`
+
+}
+
+
+//printSummary(crown, 10, 200, "Crown (8)", evac)
+//printSummary(petersen, 10, 200, "Petersen (8)", evac)
+//printSummary(wheel, 10, 200, "Wheel (8)", evac)
+
+printSummarymn(crown, 10, 200, "Crown (8)", evacnm, 3,3)
+printSummarymn(petersen, 10, 200, "Petersen (8)", evacnm, 3,3)
+printSummarymn(wheel, 10, 200, "Wheel (8)", evacnm, 3,3)
 
 //evc(crown, 10, 200, "Crown (8)")
 //ev(petersen, 10, 200, "Petersen (10)")
