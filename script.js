@@ -76,9 +76,9 @@ function eva(graph, populationSize, generations, graphType){
     }
   }
 
-  //printResults(graph, population, graphType);
+  printResults(graph, population, graphType);
 
-  return population;
+  //return population;
 
 }
 
@@ -112,8 +112,8 @@ function evac(graph, populationSize, generations, graphType){
     }
   }
 
-  return population;
-  //printResults(graph, population, graphType);
+  //return population;
+  printResults(graph, population, graphType);
 }
 
 function evacnm(n, m, graph, populationSize, generations, graphType){
@@ -152,9 +152,9 @@ function evacnm(n, m, graph, populationSize, generations, graphType){
     }
   }
 
-  return population;
+  //return population;
 
-  //printResults(graph, population, graphType);
+  printResults(graph, population, graphType);
 
 }
 
@@ -465,9 +465,14 @@ const printSummarymn = (graph, population, generations, graphType, fn, n, m) =>{
 //printSummary(petersen, 10, 200, "Petersen (8)", evac)
 //printSummary(wheel, 10, 200, "Wheel (8)", evac)
 
-printSummarymn(crown, 10, 200, "Crown (8)", evacnm, 3,3)
-printSummarymn(petersen, 10, 200, "Petersen (8)", evacnm, 3,3)
-printSummarymn(wheel, 10, 200, "Wheel (8)", evacnm, 3,3)
+
+for (var k = 0; k < 10; k++) {
+  evacnm(3,3,wheel, 10, 200, "Crown (8)");
+}
+
+//printSummarymn(crown, 10, 200, "Crown (8)", evacnm, 3,3)
+//printSummarymn(petersen, 10, 200, "Petersen (8)", evacnm, 3,3)
+//printSummarymn(wheel, 10, 200, "Wheel (8)", evacnm, 3,3)
 
 //evc(crown, 10, 200, "Crown (8)")
 //ev(petersen, 10, 200, "Petersen (10)")
